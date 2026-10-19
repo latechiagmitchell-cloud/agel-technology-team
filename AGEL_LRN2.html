@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGEL Language Academy - Interactive Prototype</title>
+  <style>
+    :root {
+      /* AGEL Brand Tokens */
+      --agel-red: #8c2d2b;
+      --agel-red-dark: #631e1c;
+      --agel-grey-red: #c08d8b;
+      --agel-grey-red-light: #f7eded;
+      
+      /* Warm Honey & Gold Touches */
+      --agel-gold: #e5ae50;
+      --agel-gold-dark: #b87d09;
+      --agel-gold-deep: #8c5b08;
+      --agel-gold-track: #fef3c7;
+      --border-gold: #f2dfba;
+
+      /* AGEL Blue Gradient System (Progress Bars & Milestones) */
+      --blue-track: #e0f2fe;
+      --blue-border: #bae6fd;
+      --blue-gradient: linear-gradient(90deg, #7dd3fc 0%, #38bdf8 40%, #2563eb 80%, #1d4ed8 100%);
+      --blue-text: #0369a1;
+
+      /* Student Experience Canvas */
+      --canvas-student: #fdf5e6;
+      --card-student: #ffffff;
+      --text-charcoal: #1e1611;
+      --text-body: #3d312a;
+      --text-muted: #78695f;
+
+      /* Instructor Canvas (Warm, Dignified, Non-Technical) */
+      --canvas-teacher: #f9f4ee;
+      --border-teacher: #eadbc8;
+
+      /* Functional Semantic States */
+      --status-success: #1b7a43;
+      --status-success-bg: #eaf6ee;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--canvas-student);
+      color: var(--text-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease;
+    }
+
+    /* ========================================================
+       TOP GLOBAL SWITCHER BAR
+       ======================================================== */
+    #mode-bar {
+      background-color: #140e0b;
+      color: #ffffff;
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--agel-gold);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .mode-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #d6cbbf;
+    }
+
+    .mode-label strong {
+      color: #ffffff;
+      background: #2d2019;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid #4a382c;
+    }
+
+    .switcher-capsule {
+      display: flex;
+      background: #241812;
+      padding: 4px;
+      border-radius: 9999px;
+      border: 1.5px solid #453226;
+      gap: 4px;
+    }
+
+    .switch-tab-btn {
+      background: transparent;
+      border: none;
+      color: #bfb2a5;
+      padding: 0.5rem 1.4rem;
+      font-size: 0.85rem;
+      font-weight: 800;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.15s ease;
+    }
+
+    .switch-tab-btn.active {
+      background-color: var(--agel-gold);
+      color: #140e0b;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+
+    .app-frame {
+      display: flex;
+      flex-grow: 1;
+    }
+
+    /* ========================================================
+       SIDEBAR NAVIGATION
+       ======================================================== */
+    aside {
+      width: 275px;
+      padding: 1.75rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      border-right: 2px solid var(--border-gold);
+      background-color: #fbf3e4;
+      transition: all 0.2s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 2rem;
+      padding-left: 0.25rem;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      background-color: var(--agel-red);
+      color: #ffffff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.35rem;
+      border: 2px solid var(--agel-gold);
+      box-shadow: 0 4px 0 var(--agel-red-dark);
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-charcoal);
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--agel-red);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      flex-grow: 1;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 2px solid transparent;
+      color: var(--text-muted);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.92rem;
+      font-weight: 700;
+      border-radius: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      transition: all 0.15s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: var(--agel-gold-track);
+      color: var(--text-charcoal);
+    }
+
+    .nav-btn.active {
+      background-color: #ffffff;
+      color: var(--agel-red);
+      border-color: var(--border-gold);
+      box-shadow: 0 4px 10px rgba(140, 45, 43, 0.05);
+    }
+
+    .offline-capsule {
+      background: #ffffff;
+      border: 2px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-top: auto;
+      box-shadow: 0 4px 0 var(--border-gold);
+    }
+
+    .offline-capsule strong {
+      display: block;
+      color: var(--agel-gold-deep);
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .offline-capsule p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* ========================================================
+       MAIN WORKSPACE
+       ======================================================== */
+    main {
+      flex-grow: 1;
+      padding: 2.25rem 2.5rem;
+      overflow-y: auto;
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-charcoal);
+      margin-bottom: 0.35rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--agel-red);
+      margin-bottom: 0.65rem;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-charcoal);
+      margin-bottom: 0.35rem;
+    }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--agel-gold-deep);
+      display: inline-block;
+      margin-bottom: 0.35rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .chip-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #ffffff;
+      border: 2px solid var(--border-gold);
+      padding: 0.5rem 0.9rem;
+      border-radius: 9999px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      box-shadow: 0 3px 0 var(--border-gold);
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      background-color: var(--agel-gold-track);
+      border: 2px solid var(--agel-gold);
+      color: var(--agel-gold-deep);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: var(--card-student);
+      border: 2px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 1.65rem;
+      box-shadow: 0 6px 14px rgba(140, 45, 43, 0.04);
+      margin-bottom: 1.5rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.35rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* 3D App Buttons */
+    .btn-app-primary {
+      background-color: var(--agel-red);
+      color: #ffffff;
+      border: none;
+      padding: 0.85rem 1.65rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 0 var(--agel-red-dark);
+      transition: all 0.1s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-app-primary:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--agel-red-dark);
+    }
+
+    .btn-app-secondary {
+      background-color: #ffffff;
+      color: var(--text-charcoal);
+      border: 2px solid var(--border-gold);
+      padding: 0.75rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 3px 0 var(--border-gold);
+      transition: all 0.1s ease;
+    }
+
+    .btn-app-secondary:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 var(--border-gold);
+    }
+
+    .reaction-pill {
+      background: #ffffff;
+      border: 1.5px solid var(--border-gold);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-body);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 2px 0 var(--border-gold);
+      transition: all 0.1s ease;
+    }
+
+    .reaction-pill:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    .reaction-pill.clicked {
+      background-color: var(--agel-gold-track);
+      border-color: var(--agel-gold);
+      color: var(--agel-gold-deep);
+    }
+
+    /* ========================================================
+       AGEL BLUE GRADIENT PROGRESS BAR SYSTEM
+       ======================================================== */
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background-color: var(--blue-track);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin: 0.65rem 0;
+      border: 1px solid var(--blue-border);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--blue-gradient);
+      border-radius: 9999px;
+      transition: width 0.3s ease;
+    }
+
+    .competency-name {
+      color: var(--agel-red) !important;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .badge-done {
+      background-color: var(--status-success-bg);
+      color: var(--status-success);
+    }
+
+    .badge-active {
+      background-color: var(--agel-gold-track);
+      color: var(--agel-gold-deep);
+      border: 1.5px solid var(--border-gold);
+    }
+
+    .badge-locked {
+      background-color: #f1ede8;
+      color: var(--text-muted);
+    }
+
+    /* Teacher Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      padding: 1rem 1.15rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-teacher);
+    }
+
+    th {
+      background-color: #f5ece2;
+      font-weight: 800;
+      color: var(--text-charcoal);
+      font-size: 0.8rem;
+      letter-spacing: 0.03em;
+    }
+
+    .player-dialogue-box {
+      background: #fffdf9;
+      border: 2px solid var(--border-gold);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .dialogue-turn {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+    }
+
+    .speaker-bubble {
+      background: #ffffff;
+      border: 1.5px solid var(--border-gold);
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      box-shadow: 0 2px 0 var(--border-gold);
+    }
+
+    .speaker-bubble.user {
+      background: var(--agel-gold-track);
+      border-color: var(--agel-gold);
+    }
+
+    .channel-card {
+      border: 2px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 1.25rem;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .channel-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(140, 45, 43, 0.08);
+      border-color: var(--agel-gold);
+    }
+
+    .activity-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.95rem 0;
+      border-bottom: 1.5px solid var(--border-gold);
+    }
+
+    .activity-bubble {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--agel-gold-track);
+      border: 1.5px solid var(--border-gold);
+      color: var(--agel-gold-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .activity-bubble.completed {
+      background-color: var(--status-success-bg);
+      border-color: var(--status-success);
+      color: var(--status-success);
+    }
+
+    .view-pane {
+      display: none;
+    }
+
+    .view-pane.active {
+      display: block;
+    }
+  </style>
+</head>
+<body id="main-body">
+
+  <!-- ========================================================
+       TOP GLOBAL SWITCHER
+       ======================================================== -->
+  <div id="mode-bar">
+    <div class="mode-label">
+      <span>Currently Viewing:</span>
+      <strong id="mode-indicator">🎓 Student Learning App (Marie Kouassi)</strong>
+    </div>
+
+    <div class="switcher-capsule">
+      <button class="switch-tab-btn active" id="btn-toggle-student" onclick="switchRole('student')">
+        <span>🎓</span><span>Student App</span>
+      </button>
+      <button class="switch-tab-btn" id="btn-toggle-teacher" onclick="switchRole('teacher')">
+        <span>📋</span><span>Teacher Gradebook</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="app-frame">
+    <!-- ========================================================
+         SIDEBAR NAVIGATION SHELL
+         ======================================================== -->
+    <aside id="sidebar">
+      <div class="brand">
+        <div class="brand-badge">A</div>
+        <div>
+          <div class="brand-title">AGEL</div>
+          <div class="brand-sub">Language Academy</div>
+        </div>
+      </div>
+
+      <!-- Student Navigation Menu -->
+      <nav id="nav-student">
+        <button class="nav-btn active" id="slink-home" onclick="navToStudent('view-s-home', this)">
+          <span>🏠</span><span>Dashboard</span>
+        </button>
+        <button class="nav-btn" id="slink-channels" onclick="navToStudent('view-s-channels', this)">
+          <span>📚</span><span>Course Units</span>
+        </button>
+        <button class="nav-btn" id="slink-player" onclick="navToStudent('view-s-player', this)">
+          <span>🎧</span><span>Lesson Practice</span>
+        </button>
+        <button class="nav-btn" id="slink-mastery" onclick="navToStudent('view-s-mastery', this)">
+          <span>📊</span><span>My Progress</span>
+        </button>
+        <button class="nav-btn" id="slink-offline" onclick="navToStudent('view-s-offline', this)">
+          <span>💾</span><span>Saved Lessons</span>
+        </button>
+      </nav>
+
+      <!-- Teacher Navigation Menu (Friendly & Plain English) -->
+      <nav id="nav-teacher" style="display:none;">
+        <button class="nav-btn active" id="tlink-cohort" onclick="navToTeacher('view-t-cohort', this)">
+          <span>👥</span><span>Class Roster & Summary</span>
+        </button>
+        <button class="nav-btn" id="tlink-emis" onclick="navToTeacher('view-t-emis', this)">
+          <span>📁</span><span>Send Grades to Official Records</span>
+        </button>
+      </nav>
+
+      <div class="offline-capsule">
+        <strong>⚡ Offline Learning Ready</strong>
+        <p>Lessons stay saved on this Chromebook. Students can practice with zero internet.</p>
+      </div>
+    </aside>
+
+    <!-- ========================================================
+         MAIN CONTENT CONTAINER
+         ======================================================== -->
+    <main>
+      <!-- ========================================================
+           STUDENT SECTION
+           ======================================================== -->
+      <div id="student-section">
+        <header>
+          <div>
+            <span class="eyebrow">🚀 College Prep English A1</span>
+            <h1 id="student-header-title">Welcome back, Marie! 👋</h1>
+            <p style="color:var(--text-muted); font-size:0.95rem;">You are 2 activities away from finishing Unit 4.</p>
+          </div>
+          
+          <div class="header-stats">
+            <div class="chip-badge" style="color:#d97706;">
+              <span>🔥</span><span>5 Day Streak</span>
+            </div>
+            <div class="chip-badge" style="color:var(--status-success);">
+              <span>⭐</span><span>340 XP</span>
+            </div>
+            <div class="avatar">MK</div>
+          </div>
+        </header>
+
+        <!-- PAGE 1: STUDENT DASHBOARD -->
+        <div id="view-s-home" class="view-pane active">
+          <div class="grid-2">
+            <div class="card" style="border-left: 6px solid var(--agel-red); display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="eyebrow">📍 Today's Lesson</span>
+                  <span class="badge badge-active">Activity 3 of 4</span>
+                </div>
+                <h2>Unit 4: At the Market 🛒</h2>
+                <p style="font-size:1rem; line-height:1.45; color:var(--text-body); margin-top:0.4rem;">
+                  Practice real-world marketplace conversations: asking prices, picking quantities, and concluding a purchase.
+                </p>
+
+                <div style="display:flex; gap:0.5rem; margin-top:1.25rem;">
+                  <button class="reaction-pill" onclick="this.classList.toggle('clicked')">
+                    <span>👍</span><span>I'm ready</span>
+                  </button>
+                  <button class="reaction-pill" onclick="this.classList.toggle('clicked')">
+                    <span>💡</span><span>Need vocabulary help</span>
+                  </button>
+                  <button class="reaction-pill" onclick="this.classList.toggle('clicked')">
+                    <span>🎧</span><span>Listen to audio</span>
+                  </button>
+                </div>
+              </div>
+
+              <div style="margin-top:1.5rem; display:flex; gap:0.75rem;">
+                <button class="btn-app-primary" onclick="navToStudent('view-s-player', document.getElementById('slink-player'))">
+                  <span>Start Practice Now</span><span>➔</span>
+                </button>
+                <button class="btn-app-secondary" onclick="navToStudent('view-s-channels', document.getElementById('slink-channels'))">
+                  <span>See All Units</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2>My Study Goals 🎯</h2>
+              <div style="display:flex; flex-direction:column; gap:1.15rem; margin-top:0.85rem;">
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700;">
+                    <span>Daily Practice Time</span>
+                    <span style="color:var(--blue-text);">15 / 20 mins</span>
+                  </div>
+                  <!-- AGEL Blue Gradient Bar -->
+                  <div class="progress-track"><div class="progress-fill" style="width:75%;"></div></div>
+                </div>
+
+                <div>
+                  <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Last Quiz Score</span>
+                  <div style="font-size:1.35rem; font-weight:800; color:var(--agel-red);">
+                    78% · Passed 🎉
+                  </div>
+                </div>
+
+                <div>
+                  <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Up Next</span>
+                  <div style="font-weight:700; color:var(--text-charcoal); display:flex; align-items:center; gap:0.4rem; margin-top:2px;">
+                    <span>💬</span><span>Market Dialogue Practice · 8 min</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h2>Your Learning Pathway 🗺️</h2>
+          <div class="grid-3">
+            <div class="card" style="border-top: 4px solid var(--status-success); cursor:pointer;" onclick="navToStudent('view-s-channels', document.getElementById('slink-channels'))">
+              <div style="display:flex; justify-content:space-between;">
+                <span class="badge badge-done">Completed ✓</span>
+                <span style="font-size:1.1rem;">🌱</span>
+              </div>
+              <h3 style="margin-top:0.6rem;">Foundations</h3>
+              <p style="font-size:0.85rem; color:var(--text-muted);">Greetings, numbers, and classroom language.</p>
+              
+              <!-- AGEL Blue Gradient Bar (100% full intensity) -->
+              <div class="progress-track"><div class="progress-fill" style="width:100%;"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; color:var(--text-muted);">
+                <span>12 of 12 lessons</span><span style="color:var(--blue-text);">100%</span>
+              </div>
+            </div>
+
+            <div class="card" style="border:2px solid var(--agel-gold); border-top: 4px solid var(--agel-gold); cursor:pointer;" onclick="navToStudent('view-s-channels', document.getElementById('slink-channels'))">
+              <div style="display:flex; justify-content:space-between;">
+                <span class="badge badge-active">Active Course ⏳</span>
+                <span style="font-size:1.1rem;">🌿</span>
+              </div>
+              <h3 style="margin-top:0.6rem;">English A1</h3>
+              <p style="font-size:0.85rem; color:var(--text-muted);">Conversational fluency for daily life and college prep.</p>
+              
+              <!-- AGEL Blue Gradient Bar (64%) -->
+              <div class="progress-track"><div class="progress-fill" style="width:64%;"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; color:var(--text-muted);">
+                <span>16 of 25 activities</span><span style="color:var(--blue-text);">64%</span>
+              </div>
+            </div>
+
+            <div class="card" style="opacity: 0.85; border-top: 4px solid var(--text-muted);">
+              <div style="display:flex; justify-content:space-between;">
+                <span class="badge badge-locked">Locked 🔒</span>
+                <span style="font-size:1.1rem;">🌳</span>
+              </div>
+              <h3 style="margin-top:0.6rem;">English A2</h3>
+              <p style="font-size:0.85rem; color:var(--text-muted);">Longer conversations, reading, and written essays.</p>
+              
+              <!-- Empty Bar -->
+              <div class="progress-track"><div class="progress-fill" style="width:0%;"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; color:var(--text-muted);">
+                <span>Unlocks after A1</span><span>0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE 2: COURSE UNITS -->
+        <div id="view-s-channels" class="view-pane">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <div>
+              <span class="eyebrow">Course Outline</span>
+              <h2>English A1 Units</h2>
+              <p style="color:var(--text-muted); font-size:0.92rem;">Click an activity to start practicing.</p>
+            </div>
+            <button class="btn-app-secondary" onclick="navToStudent('view-s-home', document.getElementById('slink-home'))">
+              <span>➔ Back to Dashboard</span>
+            </button>
+          </div>
+
+          <div class="grid-3" style="margin-bottom:1.5rem;">
+            <div class="channel-card" onclick="navToStudent('view-s-player', document.getElementById('slink-player'))">
+              <div>
+                <span class="badge badge-done" style="margin-bottom:0.5rem;">Completed</span>
+                <h3>Unit 1: Introductions</h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.3rem;">Meeting peers, formal greetings, and spelling names.</p>
+              </div>
+              <div style="margin-top:1rem; font-size:0.8rem; font-weight:700; color:var(--status-success);">✓ Final Score: 81%</div>
+            </div>
+
+            <div class="channel-card" onclick="navToStudent('view-s-player', document.getElementById('slink-player'))">
+              <div>
+                <span class="badge badge-done" style="margin-bottom:0.5rem;">Completed</span>
+                <h3>Unit 2: Daily Routine</h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.3rem;">Telling time, schedules, and daily habits.</p>
+              </div>
+              <div style="margin-top:1rem; font-size:0.8rem; font-weight:700; color:var(--status-success);">✓ Final Score: 84%</div>
+            </div>
+
+            <div class="channel-card" onclick="navToStudent('view-s-player', document.getElementById('slink-player'))">
+              <div>
+                <span class="badge badge-done" style="margin-bottom:0.5rem;">Completed</span>
+                <h3>Unit 3: Around Town</h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.3rem;">Giving directions, transit, and local landmarks.</p>
+              </div>
+              <div style="margin-top:1rem; font-size:0.8rem; font-weight:700; color:var(--status-success);">✓ Final Score: 78%</div>
+            </div>
+          </div>
+
+          <div class="card" style="border:2px solid var(--agel-gold);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span class="badge badge-active">In Progress</span>
+                <h3 style="font-size:1.25rem; margin-top:0.4rem;">Unit 4: At the Market</h3>
+              </div>
+              <span style="font-weight:800; color:var(--blue-text);">64% Finished</span>
+            </div>
+
+            <div style="margin-top:1rem;">
+              <div class="activity-row" style="cursor:pointer;" onclick="navToStudent('view-s-player', document.getElementById('slink-player'))">
+                <div style="display:flex; align-items:center; gap:0.85rem;">
+                  <div class="activity-bubble completed">✓</div>
+                  <div>
+                    <strong>Market Words & Phrases</strong>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">12 terms with audio practice</div>
+                  </div>
+                </div>
+                <span class="badge badge-done">Done</span>
+              </div>
+
+              <div class="activity-row" style="cursor:pointer;" onclick="navToStudent('view-s-player', document.getElementById('slink-player'))">
+                <div style="display:flex; align-items:center; gap:0.85rem;">
+                  <div class="activity-bubble completed">✓</div>
+                  <div>
+                    <strong>Listening: Buying Fruit at the Stall</strong>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">Short audio dialogue</div>
+                  </div>
+                </div>
+                <span class="badge badge-done">Done</span>
+              </div>
+
+              <div class="activity-row" style="cursor:pointer; background:var(--agel-gold-track); padding:0.85rem; border-radius:10px;" onclick="navToStudent('view-s-player', document.getElementById('slink-player'))">
+                <div style="display:flex; align-items:center; gap:0.85rem;">
+                  <div class="activity-bubble" style="background:var(--agel-gold); color:#ffffff;">3</div>
+                  <div>
+                    <strong style="color:var(--agel-red);">Interactive Dialogue Practice</strong>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">Speak and choose answers · ~8 min</div>
+                  </div>
+                </div>
+                <button class="btn-app-primary" style="font-size:0.8rem; padding:0.4rem 1rem;">Start Practice ➔</button>
+              </div>
+
+              <div class="activity-row" style="display:flex; align-items:center; gap:0.85rem;">
+                <div style="display:flex; align-items:center; gap:0.85rem;">
+                  <div class="activity-bubble">4</div>
+                  <div>
+                    <strong style="color:var(--text-muted);">Unit 4 Check-up Quiz</strong>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">10 questions · Unlocks after dialogue</div>
+                  </div>
+                </div>
+                <span class="badge badge-locked">Locked 🔒</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE 3: LESSON PRACTICE -->
+        <div id="view-s-player" class="view-pane">
+          <div class="card" style="border-top:5px solid var(--agel-red);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span class="eyebrow">Speaking & Listening Practice</span>
+                <h2>Unit 4: At the Market Dialogue</h2>
+              </div>
+              <span class="badge badge-active">Activity 3 of 4</span>
+            </div>
+
+            <!-- Media Player -->
+            <div style="background:#241812; color:#ffffff; padding:1.25rem; border-radius:12px; margin:1.25rem 0; display:flex; align-items:center; justify-content:space-between;">
+              <div style="display:flex; align-items:center; gap:1rem;">
+                <button style="background:var(--agel-gold); border:none; width:44px; height:44px; border-radius:50%; font-size:1.2rem; cursor:pointer;" onclick="alert('Audio playing from saved Chromebook files. Works with zero Wi-Fi!')">
+                  ▶
+                </button>
+                <div>
+                  <div style="font-weight:700;">Marketplace Audio Clip (Abidjan Fruit Market)</div>
+                  <div style="font-size:0.8rem; color:#bfb2a5;">01:24 / 03:15 · Saved to Device</div>
+                </div>
+              </div>
+              <span style="font-size:0.8rem; color:var(--agel-gold); font-weight:700;">⚡ Plays Offline</span>
+            </div>
+
+            <div class="player-dialogue-box">
+              <div class="dialogue-turn">
+                <div class="avatar" style="width:36px; height:36px; font-size:0.85rem;">MK</div>
+                <div class="speaker-bubble user">
+                  <strong>Marie:</strong>
+                  <p>Good morning! How much are the mangoes today?</p>
+                </div>
+              </div>
+
+              <div class="dialogue-turn">
+                <div class="avatar" style="width:36px; height:36px; font-size:0.85rem; background:#eadbc8; color:#3d312a;">VT</div>
+                <div class="speaker-bubble">
+                  <strong>Market Vendor:</strong>
+                  <p>They are 500 CFA francs for three. Are you looking for ripe ones to eat today?</p>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:var(--agel-gold-track); border:1.5px solid var(--border-gold); padding:1.25rem; border-radius:12px; margin-bottom:1.5rem;">
+              <strong style="color:var(--agel-gold-deep); display:block; margin-bottom:0.5rem;">
+                ✍️ Your Turn: Pick the most polite response to complete the purchase:
+              </strong>
+              <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                <button class="reaction-pill" style="padding:0.6rem 1rem; text-align:left;" onclick="alert('Great choice! That is polite, clear, and specifies what you want.')">
+                  A) "Yes, please. I would like three ripe ones."
+                </button>
+                <button class="reaction-pill" style="padding:0.6rem 1rem; text-align:left;" onclick="alert('Notice: That sounds a bit too sharp. In English market conversations, adding \"please\" or \"I would like\" sounds much friendlier.')">
+                  B) "Give me three right now."
+                </button>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <button class="btn-app-secondary" onclick="navToStudent('view-s-channels', document.getElementById('slink-channels'))">
+                <span>◀ Back to Units</span>
+              </button>
+              <button class="btn-app-primary" onclick="alert('Nice work! Your practice is saved to this Chromebook. Your teacher can now review your completion.'); navToStudent('view-s-mastery', document.getElementById('slink-mastery'))">
+                <span>Finish & Save Practice ➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE 4: MY PROGRESS & SCORES -->
+        <div id="view-s-mastery" class="view-pane">
+          <div class="grid-2">
+            <div class="card">
+              <h2>My Language Skills 📊</h2>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;">
+                Watch your blue bars grow stronger as you practice each skill area.
+              </p>
+
+              <div style="display:flex; flex-direction:column; gap:1.25rem;">
+                <div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+                    <span class="competency-name"><span>🎧</span> Listening Skills</span>
+                    <strong style="color:var(--blue-text);">84%</strong>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" style="width:84%;"></div></div>
+                </div>
+
+                <div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+                    <span class="competency-name"><span>📖</span> Vocabulary & Words</span>
+                    <strong style="color:var(--blue-text);">81%</strong>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" style="width:81%;"></div></div>
+                </div>
+
+                <div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+                    <span class="competency-name"><span>📑</span> Reading Practice</span>
+                    <strong style="color:var(--blue-text);">76%</strong>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" style="width:76%;"></div></div>
+                </div>
+
+                <div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+                    <span class="competency-name"><span>💬</span> Speaking & Conversation</span>
+                    <strong style="color:var(--blue-text);">69%</strong>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" style="width:69%;"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+              <span class="eyebrow">Overall Course Score</span>
+              <div style="font-size:4rem; font-weight:800; color:var(--agel-red); margin:0.5rem 0;">78%</div>
+              <span class="badge badge-done" style="font-size:0.85rem; padding:0.4rem 1rem;">
+                🎓 Passing Grade · On Track
+              </span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Official Quiz Results 📝</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Unit Module</th>
+                  <th>Date Taken</th>
+                  <th>Score</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Unit 3: Around Town</strong></td>
+                  <td>12 Sep 2026</td>
+                  <td style="font-weight:800; color:var(--blue-text);">78%</td>
+                  <td><span class="badge badge-done">Passed ✓</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Unit 2: Daily Routine</strong></td>
+                  <td>29 Aug 2026</td>
+                  <td style="font-weight:800; color:var(--blue-text);">84%</td>
+                  <td><span class="badge badge-done">Passed ✓</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Unit 1: Introductions</strong></td>
+                  <td>15 Aug 2026</td>
+                  <td style="font-weight:800; color:var(--blue-text);">81%</td>
+                  <td><span class="badge badge-done">Passed ✓</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PAGE 5: SAVED LESSONS (OFFLINE STORAGE) -->
+        <div id="view-s-offline" class="view-pane">
+          <div class="grid-2">
+            <div class="card">
+              <span class="eyebrow">On This Device</span>
+              <h2>Saved Lessons (No Internet Needed) 💾</h2>
+              <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.25rem;">
+                These lessons are saved right on your Chromebook so you can study anywhere.
+              </p>
+
+              <div class="activity-row">
+                <div>
+                  <strong>Unit 4: At the Market Lesson Pack</strong>
+                  <div style="font-size:0.8rem; color:var(--text-muted);">Word lists, dialogue audio, practice cards</div>
+                </div>
+                <div style="text-align:right;">
+                  <strong style="color:var(--status-success);">28.4 MB (Ready)</strong>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Saved on Chromebook</div>
+                </div>
+              </div>
+
+              <div class="activity-row">
+                <div>
+                  <strong>Units 1–3 Review Pack</strong>
+                  <div style="font-size:0.8rem; color:var(--text-muted);">Past unit summaries and audio</div>
+                </div>
+                <div style="text-align:right;">
+                  <strong>64.1 MB</strong>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Saved on Chromebook</div>
+                </div>
+              </div>
+
+              <button class="btn-app-secondary" style="width:100%; margin-top:1.25rem;" onclick="alert('Checked! All lessons are safely saved and ready to open without Wi-Fi.')">
+                <span>🔄 Check Saved Files</span>
+              </button>
+            </div>
+
+            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <h2>Internet Connection</h2>
+                <div style="margin-top:1rem; display:flex; flex-direction:column; gap:0.75rem;">
+                  <div>
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Network Mode</span>
+                    <strong style="display:block; color:var(--status-success);">Offline Mode (No data used)</strong>
+                  </div>
+                  <div>
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Device Storage Space</span>
+                    <strong style="display:block;">Plenty of room (92 MB used)</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="badge badge-done" style="padding:0.75rem; justify-content:center;">
+                ✓ Ready for Home or Travel Study
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================
+           TEACHER SECTION (PLAIN ENGLISH, WARM & ELEGANT)
+           ======================================================== -->
+      <div id="teacher-section" style="display:none;">
+        <header>
+          <div>
+            <span class="eyebrow" style="color:var(--agel-red);">Teacher & Staff Portal</span>
+            <h1>Cohort A Class Roster & Records</h1>
+            <p style="color:var(--text-muted); font-size:0.95rem;">Review your students' practice progress and send their verified scores to official school records.</p>
+          </div>
+          <div class="header-stats">
+            <div class="chip-badge">
+              <span>👤</span>
+              <div>
+                <strong style="font-size:0.85rem; display:block; color:var(--text-charcoal);">Latechia Mitchell</strong>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Lead Instructor</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- TEACHER VIEW 1: CLASS ROSTER SUMMARY -->
+        <div id="view-t-cohort" class="view-pane active">
+          <div class="grid-3">
+            <div class="card">
+              <span class="eyebrow">Class Size</span>
+              <div style="font-size:2rem; font-weight:800; color:var(--text-charcoal); margin:0.35rem 0;">24 Students</div>
+              <span class="badge badge-done">Cohort A · Active & Attending</span>
+            </div>
+            <div class="card">
+              <span class="eyebrow">Average Class Progress</span>
+              <div style="font-size:2rem; font-weight:800; color:var(--agel-gold-deep); margin:0.35rem 0;">68%</div>
+              <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">English A1 Level</span>
+            </div>
+            <div class="card">
+              <span class="eyebrow">Ready to Submit</span>
+              <div style="font-size:2rem; font-weight:800; color:var(--agel-red); margin:0.35rem 0;" id="staged-count">3 Students</div>
+              <span class="badge badge-active">Scores Waiting for Approval</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER VIEW 2: SEND GRADES TO OFFICIAL RECORDS -->
+        <div id="view-t-emis" class="view-pane">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+              <div>
+                <h2>Send Grades to Official Records (OpenEMIS)</h2>
+                <p style="font-size:0.88rem; color:var(--text-muted); margin-top:0.25rem;">
+                  Review classroom quiz scores before saving them permanently into the central school system.
+                </p>
+              </div>
+              <button class="btn-app-primary" style="font-size:0.85rem; padding:0.65rem 1.35rem;" onclick="commitAllRecords()">
+                <span>Approve & Send Ready Grades</span><span>➔</span>
+              </button>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Student ID</th>
+                  <th>Class Progress</th>
+                  <th>Latest Quiz</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Marie Kouassi</strong></td>
+                  <td><code>AGEL-00427</code></td>
+                  <td>64% completed</td>
+                  <td style="font-weight:800; color:var(--blue-text);">78%</td>
+                  <td><span class="badge badge-done" id="row-1-status">Ready to Send</span></td>
+                  <td><button class="btn-app-secondary" style="font-size:0.75rem; padding:0.35rem 0.85rem;" onclick="commitSingle(1)">Send Grade</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Yao Koffi</strong></td>
+                  <td><code>AGEL-00428</code></td>
+                  <td>72% completed</td>
+                  <td style="font-weight:800; color:var(--blue-text);">82%</td>
+                  <td><span class="badge badge-done" id="row-2-status">Ready to Send</span></td>
+                  <td><button class="btn-app-secondary" style="font-size:0.75rem; padding:0.35rem 0.85rem;" onclick="commitSingle(2)">Send Grade</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Awa Diallo</strong></td>
+                  <td><code>AGEL-00429</code></td>
+                  <td>88% completed</td>
+                  <td style="font-weight:800; color:var(--blue-text);">91%</td>
+                  <td><span class="badge badge-done" style="background:#e8f4fc; color:#0369a1;">Saved in Records</span></td>
+                  <td><span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Completed</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Bakary Traoré</strong></td>
+                  <td><code>AGEL-00430</code></td>
+                  <td>35% completed</td>
+                  <td style="font-weight:800; color:#d97706;">54%</td>
+                  <td><span class="badge badge-active" style="background:#fff3cd; color:#856404; border-color:#ffeeba;">Needs Review (&lt; 75%)</span></td>
+                  <td><button class="btn-app-secondary" style="font-size:0.75rem; padding:0.35rem 0.85rem;" onclick="alert('Bakary scored 54% (under the 75% goal). You can offer him extra practice before sending this grade to official records.')">Review</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Role Switcher
+    function switchRole(role) {
+      const studentSec = document.getElementById('student-section');
+      const teacherSec = document.getElementById('teacher-section');
+      const navStudent = document.getElementById('nav-student');
+      const navTeacher = document.getElementById('nav-teacher');
+      const btnStudent = document.getElementById('btn-toggle-student');
+      const btnTeacher = document.getElementById('btn-toggle-teacher');
+      const indicator = document.getElementById('mode-indicator');
+      const body = document.getElementById('main-body');
+      const sidebar = document.getElementById('sidebar');
+
+      if (role === 'student') {
+        studentSec.style.display = 'block';
+        teacherSec.style.display = 'none';
+        navStudent.style.display = 'flex';
+        navTeacher.style.display = 'none';
+        btnStudent.classList.add('active');
+        btnTeacher.classList.remove('active');
+        indicator.innerText = '🎓 Student Learning App (Marie Kouassi)';
+        body.style.backgroundColor = 'var(--canvas-student)';
+        sidebar.style.backgroundColor = '#fbf3e4';
+      } else {
+        studentSec.style.display = 'none';
+        teacherSec.style.display = 'block';
+        navStudent.style.display = 'none';
+        navTeacher.style.display = 'flex';
+        btnStudent.classList.remove('active');
+        btnTeacher.classList.add('active');
+        indicator.innerText = '📋 Teacher Gradebook (Latechia Mitchell)';
+        body.style.backgroundColor = 'var(--canvas-teacher)';
+        sidebar.style.backgroundColor = '#f5ede3';
+        navToTeacher('view-t-cohort', document.getElementById('tlink-cohort'));
+      }
+    }
+
+    // Student Sub-Navigation
+    function navToStudent(viewId, btn) {
+      document.querySelectorAll('#student-section .view-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('#nav-student .nav-btn').forEach(b => b.classList.remove('active'));
+      
+      const targetPane = document.getElementById(viewId);
+      if (targetPane) targetPane.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    // Teacher Sub-Navigation
+    function navToTeacher(viewId, btn) {
+      document.querySelectorAll('#teacher-section .view-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('#nav-teacher .nav-btn').forEach(b => b.classList.remove('active'));
+      
+      const targetPane = document.getElementById(viewId);
+      if (targetPane) targetPane.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    // Teacher Actions
+    function commitSingle(id) {
+      const status = document.getElementById('row-' + id + '-status');
+      if (status) {
+        status.className = 'badge badge-done';
+        status.style.background = '#e8f4fc';
+        status.style.color = '#0369a1';
+        status.innerText = 'Saved in Records';
+      }
+      alert('Grade saved! This score has been added to the official student file in OpenEMIS.');
+    }
+
+    function commitAllRecords() {
+      commitSingle(1);
+      commitSingle(2);
+      const queue = document.getElementById('staged-count');
+      if (queue) queue.innerText = '1 Student';
+      alert('Approved! All eligible student grades have been sent to the official school records.');
+    }
+  </script>
+</body>
+</html>
